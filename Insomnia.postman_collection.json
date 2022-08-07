@@ -1,0 +1,65 @@
+{
+  "info": {
+    "_postman_id": "701feeb9-10d8-4567-bd9a-0f985f0f85d1",
+    "name": "requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Technical Test",
+      "item": [
+        {
+          "name": "get user detail",
+          "request": {
+            "description": "",
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/user/Kimiko",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "user",
+                "Kimiko"
+              ]
+            },
+            "auth": {}
+          },
+          "response": []
+        },
+        {
+          "name": "Register new user",
+          "request": {
+            "description": "",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"username\": \"user123\",\n  \"birthDate\": \"1961-08-05\",\n  \"countryOfResidence\": \"France\",\n  \"phoneNumber\": \"0633945969\",\n  \"gender\": \"MALE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/user/",
+              "protocol": "http",
+              "host": [
+                "localhost:8080"
+              ],
+              "path": [
+                "user",
+                ""
+              ]
+            },
+            "auth": {}
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
