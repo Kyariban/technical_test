@@ -1,5 +1,6 @@
 package com.test.technical.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.test.technical.dto.UserCreationBean;
 
 import javax.persistence.*;
@@ -69,6 +70,7 @@ public class User {
         return this;
     }
 
+    @JsonIgnore
     public Boolean isValidForRegistration() {
         return "France".equals(this.countryOfResidence) && this.getCurrentAge() >= 18;
     }

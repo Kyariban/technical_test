@@ -5,8 +5,7 @@ import com.test.technical.controller.errorhandling.exception.UserAlreadyExistsEx
 import com.test.technical.controller.errorhandling.exception.UserNotFoundException;
 import com.test.technical.controller.restresources.UserRepresentationModel;
 import com.test.technical.dto.UserCreationBean;
-import com.test.technical.model.Gender;
-import com.test.technical.model.User;
+import com.test.technical.user.UserTestParent;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,12 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserServiceTest {
+public class UserServiceTest extends UserTestParent {
 
     @Autowired
     private UserService userService;
@@ -41,17 +38,6 @@ public class UserServiceTest {
         if(userRepresentation.getBody() != null) {
             Assert.assertEquals(getTestUserKimiko(), userRepresentation.getBody().getUser());
         }
-    }
-
-    private User getTestUserKimiko() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthDate = formatter.parse("1961-08-06");
-        return new User()
-                .setUsername("Kimiko")
-                .setBirthDate(birthDate)
-                .setCountryOfResidence("Japan")
-                .setPhoneNumber("0633945969")
-                .setGender(Gender.FEMALE);
     }
 
     @Test
@@ -144,26 +130,4 @@ public class UserServiceTest {
         creationBean.setUsername("Martin");
         userService.registerUserAndGetAsRepresentationModel(creationBean);
     }
-
-    private UserCreationBean getValidUserCreationBean() {
-        return new UserCreationBean()
-                .setUsername("Jean")
-                .setBirthDate("1961-08-05")
-                .setCountryOfResidence("France")
-                .setPhoneNumber("0633945969")
-                .setGender("MALE");
-    }
-
-    private User getTestUserJean() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthDate = formatter.parse("1961-08-05");
-        return new User()
-                .setUsername("Jean")
-                .setBirthDate(birthDate)
-                .setCountryOfResidence("France")
-                .setPhoneNumber("0633945969")
-                .setGender(Gender.MALE);
-    }
-
-
 }
