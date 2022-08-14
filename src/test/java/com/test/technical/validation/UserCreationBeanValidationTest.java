@@ -76,7 +76,7 @@ public class UserCreationBeanValidationTest {
                 .setUsername("Jean")
                 .setBirthDate("1961-08-05")
                 .setCountryOfResidence("France")
-                .setPhoneNumber("0633945969")
+                .setPhoneNumber("0644649021")
                 .setGender("MALE");
     }
 

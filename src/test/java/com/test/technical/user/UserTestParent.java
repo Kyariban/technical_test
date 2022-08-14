@@ -17,7 +17,7 @@ public class UserTestParent {
                 .setUsername("Jean")
                 .setBirthDate(birthDate)
                 .setCountryOfResidence("France")
-                .setPhoneNumber("0633945969")
+                .setPhoneNumber("0644649021")
                 .setGender(Gender.MALE);
     }
 
@@ -28,7 +28,7 @@ public class UserTestParent {
                 .setUsername("Kimiko")
                 .setBirthDate(birthDate)
                 .setCountryOfResidence("Japan")
-                .setPhoneNumber("0633945969")
+                .setPhoneNumber("0644649021")
                 .setGender(Gender.FEMALE);
     }
 
@@ -37,7 +37,7 @@ public class UserTestParent {
                 .setUsername("Jean")
                 .setBirthDate("1961-08-05")
                 .setCountryOfResidence("France")
-                .setPhoneNumber("0633945969")
+                .setPhoneNumber("0644649021")
                 .setGender("MALE");
     }
 

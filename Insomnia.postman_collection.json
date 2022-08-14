@@ -42,7 +42,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"username\": \"user123\",\n  \"birthDate\": \"1961-08-05\",\n  \"countryOfResidence\": \"France\",\n  \"phoneNumber\": \"0633945969\",\n  \"gender\": \"MALE\"\n}"
+              "raw": "{\n\t\"username\": \"user123\",\n  \"birthDate\": \"1961-08-05\",\n  \"countryOfResidence\": \"France\",\n  \"phoneNumber\": \"0644649021\",\n  \"gender\": \"MALE\"\n}"
             },
             "url": {
               "raw": "http://localhost:8080/user/",
