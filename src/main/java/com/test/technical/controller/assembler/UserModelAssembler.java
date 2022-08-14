@@ -22,11 +22,8 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
     private UserRepresentationModel createResourceAndSetSelfLink(User user) {
         UserRepresentationModel userRepresentationModel = new UserRepresentationModel(user);
 
-        Link selfLink = linkTo(methodOn(UserController.class).getUserDetail(user.getUsername()))
-                .withSelfRel();
-
+        Link selfLink = linkTo(methodOn(UserController.class).getUserDetail(user.getUsername())).withSelfRel();
         userRepresentationModel.add(selfLink);
-
         return userRepresentationModel;
     }
 }

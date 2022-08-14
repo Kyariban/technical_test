@@ -17,16 +17,31 @@ public class LogIOAndExecutionTimeAspect {
 
     @Around("@annotation(com.test.technical.logging.annotation.LogIOAndExecutionTime)")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        logSignatureAndArgs(joinPoint);
+        Object result = proceedAndLogExecutionTime(joinPoint);
+        logExitSignatureAndResult(joinPoint, result);
+
+        return result;
+    }
+
+    private void logSignatureAndArgs(ProceedingJoinPoint joinPoint) {
+        String args = Arrays.toString(joinPoint.getArgs());
         LOGGER.info("Enter: {}.{}() with argument[s] = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
+                joinPoint.getSignature().getName(),args);
+    }
+
+    private Object proceedAndLogExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         Object result = joinPoint.proceed();
         long executionTime = System.currentTimeMillis() - start;
 
-        LOGGER.info("Exit: {}.{}() with result = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                joinPoint.getSignature().getName(), result);
-
         LOGGER.info("{} executed in {} ms", joinPoint.getSignature(), executionTime);
         return result;
+    }
+
+    private void logExitSignatureAndResult(ProceedingJoinPoint joinPoint, Object result) {
+        LOGGER.info("Exit: {}.{}() with result = {}", joinPoint.getSignature().getDeclaringTypeName(),
+                joinPoint.getSignature().getName(), result);
     }
 }

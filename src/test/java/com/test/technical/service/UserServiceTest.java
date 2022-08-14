@@ -30,7 +30,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    public final ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void givenUsername_whenQueried_thenReturnUserRepresentation() throws ParseException {
