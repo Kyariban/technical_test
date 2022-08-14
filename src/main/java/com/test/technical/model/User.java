@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Entity
@@ -101,5 +102,22 @@ public class User {
             throw new IllegalArgumentException("The birth date should be in the past");
         }
         return birthDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username) &&
+                Objects.equals(birthDate, user.birthDate) &&
+                Objects.equals(countryOfResidence, user.countryOfResidence) &&
+                Objects.equals(phoneNumber, user.phoneNumber) &&
+                gender == user.gender;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, birthDate, countryOfResidence, phoneNumber, gender);
     }
 }

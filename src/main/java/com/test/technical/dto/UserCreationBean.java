@@ -28,40 +28,45 @@ public class UserCreationBean {
         return username;
     }
 
-    public void setUsername(String username) {
+    public UserCreationBean setUsername(String username) {
         this.username = username;
+        return this;
     }
 
     public String getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(String birthDate) {
+    public UserCreationBean setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+        return this;
     }
 
     public String getCountryOfResidence() {
         return countryOfResidence;
     }
 
-    public void setCountryOfResidence(String countryOfResidence) {
+    public UserCreationBean setCountryOfResidence(String countryOfResidence) {
         this.countryOfResidence = countryOfResidence;
+        return this;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public UserCreationBean setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        return this;
     }
 
     public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public UserCreationBean setGender(String gender) {
         this.gender = gender;
+        return this;
     }
 
     @Override
