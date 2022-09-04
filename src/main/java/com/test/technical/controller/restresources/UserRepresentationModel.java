@@ -2,7 +2,7 @@ package com.test.technical.controller.restresources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.test.technical.model.User;
+import com.test.technical.dto.UserRepresentationBean;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Objects;
@@ -11,13 +11,13 @@ import java.util.Objects;
 public class UserRepresentationModel extends RepresentationModel<UserRepresentationModel>{
 
     @JsonUnwrapped
-    private final User user;
+    private final UserRepresentationBean user;
 
-    public UserRepresentationModel(User user) {
+    public UserRepresentationModel(UserRepresentationBean user) {
         this.user = user;
     }
 
-    public User getUser() {
+    public UserRepresentationBean getUser() {
         return user;
     }
 

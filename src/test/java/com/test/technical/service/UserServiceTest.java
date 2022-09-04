@@ -1,133 +1,146 @@
 package com.test.technical.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.technical.controller.errorhandling.exception.InvalidUserException;
 import com.test.technical.controller.errorhandling.exception.UserAlreadyExistsException;
 import com.test.technical.controller.errorhandling.exception.UserNotFoundException;
 import com.test.technical.controller.restresources.UserRepresentationModel;
 import com.test.technical.dto.UserCreationBean;
+import com.test.technical.dto.UserRepresentationBean;
 import com.test.technical.user.UserTestParent;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-@RunWith(SpringRunner.class)
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 public class UserServiceTest extends UserTestParent {
 
     @Autowired
     private UserService userService;
 
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
+    @Autowired
+    public UserServiceTest(ObjectMapper objectMapper) {
+        super(objectMapper);
+    }
+
 
     @Test
-    public void givenUsername_whenQueried_thenReturnUserRepresentation() throws ParseException {
+    public void givenUsername_whenQueried_thenReturnUserRepresentation() {
         ResponseEntity<UserRepresentationModel> userRepresentation =
                 userService.getUserRepresentationModelByUsername("Kimiko");
 
-        Assert.assertEquals(HttpStatus.OK, userRepresentation.getStatusCode());
+        assertEquals(HttpStatus.OK, userRepresentation.getStatusCode());
         if(userRepresentation.getBody() != null) {
-            Assert.assertEquals(getTestUserKimiko(), userRepresentation.getBody().getUser());
+            UserRepresentationBean bean = UserRepresentationBean.fromModel(getTestUserKimiko());
+            assertEquals(bean, userRepresentation.getBody().getUser());
         }
     }
 
     @Test
     public void givenUnknownUser_whenQueried_thenThrowsException(){
-        expectedException.expect(UserNotFoundException.class);
-        expectedException.expectMessage("Cannot find an user with the specified username : Unknown");
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () ->
+                userService.getUserRepresentationModelByUsername("Unknown")
+        );
 
-        userService.getUserRepresentationModelByUsername("Unknown");
+        assertTrue(exception.getMessage().contains("Cannot find an user with the specified username : Unknown"));
     }
 
     @Test
-    public void givenValidRegistrationBean_whenRegistering_thenReturnCreatedUserRepresentation() throws ParseException {
+    public void givenValidRegistrationBean_whenRegistering_thenReturnCreatedUserRepresentation() {
         UserCreationBean creationBean = getValidUserCreationBean();
         ResponseEntity<UserRepresentationModel> createdUserRepresentation =
                 userService.registerUserAndGetAsRepresentationModel(creationBean);
 
-        Assert.assertEquals(HttpStatus.CREATED, createdUserRepresentation.getStatusCode());
+        assertEquals(HttpStatus.CREATED, createdUserRepresentation.getStatusCode());
         if(createdUserRepresentation.getBody() != null) {
-            Assert.assertEquals(getTestUserJean(), createdUserRepresentation.getBody().getUser());
+            UserRepresentationBean bean = UserRepresentationBean.fromModel(getTestUserJean());
+            assertEquals(bean, createdUserRepresentation.getBody().getUser());
         }
     }
 
     @Test
     public void givenInvalidBirthDate_whenRegistering_thenThrows() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Unparseable date: \"birthDate\"");
+        DateTimeParseException exception = assertThrows(DateTimeParseException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setBirthDate(LocalDate.parse("birthDate"));
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setBirthDate("birthDate");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("Text 'birthDate' could not be parsed at index 0"));
     }
 
     @Test
     public void givenFutureBirthDate_whenRegistering_thenThrows() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("The birth date should be in the past");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setBirthDate(null);
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setBirthDate("2042-08-05");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("Cannot retrieve the age of the user, missing birth date"));
     }
 
     @Test
     public void givenBadGender_whenRegistering_thenThrows() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("No enum constant com.test.technical.model.Gender.INVALID_GENDER");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setGender("INVALID_GENDER");
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setGender("INVALID_GENDER");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("No enum constant com.test.technical.model.Gender.INVALID_GENDER"));
     }
 
     @Test
     public void givenNonLivingInFranceUser_whenRegistering_thenThrows() {
-        expectedException.expect(InvalidUserException.class);
-        expectedException.expectMessage("The given user is either not living in France and/or not an adult");
+        InvalidUserException exception = assertThrows(InvalidUserException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setCountryOfResidence("Portugal");
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setCountryOfResidence("Portugal");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("The given user is either not living in France and/or not an adult"));
     }
 
     @Test
     public void givenNonNotAdultUser_whenRegistering_thenThrows() {
-        expectedException.expect(InvalidUserException.class);
-        expectedException.expectMessage("The given user is either not living in France and/or not an adult");
+        InvalidUserException exception = assertThrows(InvalidUserException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setBirthDate(LocalDate.parse("2010-08-05"));
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setBirthDate("2010-08-05");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("The given user is either not living in France and/or not an adult"));
     }
 
     @Test
     public void givenNonNotAdultUserAndNotLivingInFrance_whenRegistering_thenThrows() {
-        expectedException.expect(InvalidUserException.class);
-        expectedException.expectMessage("The given user is either not living in France and/or not an adult");
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setCountryOfResidence("Portugal");
-        creationBean.setBirthDate("2010-08-05");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        InvalidUserException exception = assertThrows(InvalidUserException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setCountryOfResidence("Portugal");
+            creationBean.setBirthDate(LocalDate.parse("2010-08-05"));
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
+
+        assertTrue(exception.getMessage().contains("The given user is either not living in France and/or not an adult"));
     }
 
     @Test
     public void givenAlreadyExistingUser_whenRegistering_thenThrows() {
-        expectedException.expect(UserAlreadyExistsException.class);
-        expectedException.expectMessage("An user already exists for this username : Martin");
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
+            UserCreationBean creationBean = getValidUserCreationBean();
+            creationBean.setUsername("Martin");
+            userService.registerUserAndGetAsRepresentationModel(creationBean);
+        });
 
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setUsername("Martin");
-        userService.registerUserAndGetAsRepresentationModel(creationBean);
+        assertTrue(exception.getMessage().contains("An user already exists for this username : Martin"));
     }
 }

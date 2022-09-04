@@ -1,19 +1,30 @@
 package com.test.technical.dto;
 
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
-@SuppressWarnings("unused")
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
+
+@Builder
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Setter
+@Getter
+@EqualsAndHashCode
 public class UserCreationBean {
 
     @NotEmpty(message = "The username is mandatory")
     private String username;
 
-    @NotEmpty(message = "The birth date is mandatory")
-    @Pattern(regexp = "\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])",
-            message = "The date should be formatted as such : yyyy-MM-dd")
-    private String birthDate;
+    @NotNull(message = "The birth date is mandatory")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") // Allow leniency
+    @Past(message = "The birth date must be in the past")
+    private LocalDate birthDate;
 
     @NotEmpty(message = "The country or residence is mandatory")
     @Pattern(regexp = "[a-zA-Z]+", message = "The country of residence should only contain letters")
@@ -23,60 +34,4 @@ public class UserCreationBean {
     private String phoneNumber;
 
     private String gender;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public UserCreationBean setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public UserCreationBean setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-        return this;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public UserCreationBean setCountryOfResidence(String countryOfResidence) {
-        this.countryOfResidence = countryOfResidence;
-        return this;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public UserCreationBean setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-        return this;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public UserCreationBean setGender(String gender) {
-        this.gender = gender;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "UserCreationBean{" +
-                "username='" + username + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", countryOfResidence='" + countryOfResidence + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", gender='" + gender + '\'' +
-                '}';
-    }
 }

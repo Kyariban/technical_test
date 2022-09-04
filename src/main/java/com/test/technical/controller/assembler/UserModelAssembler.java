@@ -2,6 +2,7 @@ package com.test.technical.controller.assembler;
 
 import com.test.technical.controller.UserController;
 import com.test.technical.controller.restresources.UserRepresentationModel;
+import com.test.technical.dto.UserRepresentationBean;
 import com.test.technical.model.User;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -16,10 +17,11 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
 
     @Override
     public UserRepresentationModel toModel(User user) {
-        return createResourceAndSetSelfLink(user);
+        UserRepresentationBean representationBean = UserRepresentationBean.fromModel(user);
+        return createResourceAndSetSelfLink(representationBean);
     }
 
-    public static UserRepresentationModel createResourceAndSetSelfLink(User user) {
+    public static UserRepresentationModel createResourceAndSetSelfLink(UserRepresentationBean user) {
         UserRepresentationModel userRepresentationModel = new UserRepresentationModel(user);
 
         Link selfLink = linkTo(methodOn(UserController.class).getUserDetail(user.getUsername())).withSelfRel();

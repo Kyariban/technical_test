@@ -5,45 +5,51 @@ import com.test.technical.dto.UserCreationBean;
 import com.test.technical.model.Gender;
 import com.test.technical.model.User;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UserTestParent {
-    protected User getTestUserJean() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthDate = formatter.parse("1961-08-05");
-        return new User()
-                .setUsername("Jean")
-                .setBirthDate(birthDate)
-                .setCountryOfResidence("France")
-                .setPhoneNumber("0644649021")
-                .setGender(Gender.MALE);
+
+    private final ObjectMapper objectMapper;
+
+    public UserTestParent(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    protected User getTestUserKimiko() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthDate = formatter.parse("1961-08-06");
-        return new User()
-                .setUsername("Kimiko")
-                .setBirthDate(birthDate)
-                .setCountryOfResidence("Japan")
-                .setPhoneNumber("0644649021")
-                .setGender(Gender.FEMALE);
+    protected User getTestUserJean() {
+        LocalDate birthDate = LocalDate.parse("1961-08-05");
+        return User.builder()
+                .username("Jean")
+                .birthDate(birthDate)
+                .countryOfResidence("France")
+                .phoneNumber("0644649021")
+                .gender(Gender.MALE)
+                .build();
+    }
+
+    protected User getTestUserKimiko() {
+        LocalDate birthDate = LocalDate.parse("1961-08-06");
+        return User.builder()
+                .username("Kimiko")
+                .birthDate(birthDate)
+                .countryOfResidence("Japan")
+                .phoneNumber("0644649021")
+                .gender(Gender.FEMALE)
+                .build();
     }
 
     protected UserCreationBean getValidUserCreationBean() {
-        return new UserCreationBean()
-                .setUsername("Jean")
-                .setBirthDate("1961-08-05")
-                .setCountryOfResidence("France")
-                .setPhoneNumber("0644649021")
-                .setGender("MALE");
+        return UserCreationBean.builder()
+                .username("Jean")
+                .birthDate(LocalDate.parse("1961-08-05"))
+                .countryOfResidence("France")
+                .phoneNumber("0644649021")
+                .gender("MALE")
+                .build();
     }
 
     protected String asJsonString(UserCreationBean creationBean) {
         try {
-            return new ObjectMapper().writeValueAsString(creationBean);
+            return objectMapper.writeValueAsString(creationBean);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

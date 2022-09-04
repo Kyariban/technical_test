@@ -13,17 +13,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserModelAssembler userModelAssembler;
 
     @Autowired
-    private UserModelAssembler userModelAssembler;
+    public UserService(UserRepository userRepository, UserModelAssembler userModelAssembler) {
+        this.userRepository = userRepository;
+        this.userModelAssembler = userModelAssembler;
+    }
 
     public ResponseEntity<UserRepresentationModel> getUserRepresentationModelByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
@@ -43,11 +45,7 @@ public class UserService {
     }
 
     private User initializeFromBeanWithParsingValidityConstraints(UserCreationBean creationBean) {
-        try {
-            return User.fromCreationBean(creationBean);
-        } catch (ParseException ex) {
-            throw new IllegalArgumentException(ex);
-        }
+        return User.fromCreationBean(creationBean);
     }
 
     private void checkIfUserIsValid(User user) {

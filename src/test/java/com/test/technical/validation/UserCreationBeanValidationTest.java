@@ -1,20 +1,23 @@
 package com.test.technical.validation;
 
 import com.test.technical.dto.UserCreationBean;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.time.LocalDate;
 import java.util.Set;
 
-@RunWith(SpringRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class UserCreationBeanValidationTest {
 
     @Test
@@ -35,14 +38,6 @@ public class UserCreationBeanValidationTest {
         assertValidationMessage(constraintViolations, "The birth date is mandatory");
     }
 
-    @Test
-    public void givenInvalidBirthdate_whenValidating_shouldHaveErrors() {
-        UserCreationBean creationBean = getValidUserCreationBean();
-        creationBean.setBirthDate("invalid");
-
-        Set<ConstraintViolation<UserCreationBean>> constraintViolations = performValidation(creationBean);
-        assertValidationMessage(constraintViolations, "The date should be formatted as such : yyyy-MM-dd");
-    }
 
     @Test
     public void givenNullCountryOfResidence_whenValidating_shouldHaveErrors() {
@@ -72,12 +67,13 @@ public class UserCreationBeanValidationTest {
     }
 
     private UserCreationBean getValidUserCreationBean() {
-        return new UserCreationBean()
-                .setUsername("Jean")
-                .setBirthDate("1961-08-05")
-                .setCountryOfResidence("France")
-                .setPhoneNumber("0644649021")
-                .setGender("MALE");
+        return UserCreationBean.builder()
+                .username("Jean")
+                .birthDate(LocalDate.parse("1961-08-05"))
+                .countryOfResidence("France")
+                .phoneNumber("0644649021")
+                .gender("MALE")
+                .build();
     }
 
     private Set<ConstraintViolation<UserCreationBean>> performValidation(UserCreationBean creationBean) {
@@ -88,12 +84,12 @@ public class UserCreationBeanValidationTest {
 
     private void assertValidationMessage(Set<ConstraintViolation<UserCreationBean>> constraintViolations,
                                          String expectedMessage) {
-        Assert.assertEquals(1, constraintViolations.size());
+        assertEquals(1, constraintViolations.size());
         boolean doesMessageMatch = constraintViolations
                 .stream()
                 .map(ConstraintViolation::getMessage)
                 .anyMatch(expectedMessage::equals);
 
-        Assert.assertTrue(doesMessageMatch);
+        assertTrue(doesMessageMatch);
     }
 }
